@@ -4,33 +4,20 @@ const mongoose = require("mongoose");
 const Listing = require("./modals/listing.js");
 const path = require("path");
 const methodOverride = require("method-override");
-<<<<<<< HEAD
-const wrapAsync = require("./utils/wrapAsync.js");
-const EpressError = require("./utils/ExpressError.js");
-const ExpressError = require("./utils/ExpressError.js");
-=======
 const ejsMate = require('ejs-mate');
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const listingSchema = require("./schema.js");
->>>>>>> e24ecb763bca4df9935ae423778be37ac160b343
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
 main()
   .then(() => {
     console.log("connetced to DB");
-<<<<<<< HEAD
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-=======
 })
     .catch((err) => {
         console.log(err);
     });
->>>>>>> e24ecb763bca4df9935ae423778be37ac160b343
 
 async function main() {
   await mongoose.connect(MONGO_URL);
@@ -48,7 +35,15 @@ app.get("/", (req, res) => {
   res.send("hi iam root");
 });
 
-<<<<<<< HEAD
+const validateListing = (req, res, next) => {
+    let {error} = listingSchema.validate(req.body);
+    if(error){
+        throw new ExpressError(400, error.message);
+    }else{
+        next();
+    }
+}
+
 app.get(
   "/listings",
   wrapAsync(async (req, res) => {
@@ -73,6 +68,7 @@ app.get(
 // create route
 app.post(
   "/listings",
+  validateListing,
   wrapAsync(async (req, res, next) => {
     if (!(req.body.listing)) {
       throw new ExpressError(400, "Send valid data for listing");
@@ -87,6 +83,7 @@ app.post(
 //Edit Route
 app.get(
   "/listings/:id/edit",
+  validateListing,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     const listing = await Listing.findById(id);
@@ -113,74 +110,6 @@ app.delete(
     console.log(deletedListing);
     res.redirect("/listings");
   })
-=======
-const validateListing = (req, res, next) => {
-    let {error} = listingSchema.validate(req.body);
-    if(error){
-        throw new ExpressError(400, error.message);
-    }else{
-        next();
-    }
-}
-
-app.get(
-    "/listings",
-    wrapAsync(async (req, res) => {
-
-        const allListings = await Listing.find({});
-        res.render("listings/index", { allListings });
-    })
-);
-
-
-app.get("/listings/new", (req, res) => {
-    res.render("listings/new");
-})
-
-
-app.get(
-    "/listings/:id",
-    wrapAsync(async (req, res) => {
-        const { id } = req.params;
-        const listing = await Listing.findById(id);
-        res.render("listings/show", { listing });
-    })
-);
-
-
-// create route
-app.post(
-    "/listings",
-    validateListing,
-    wrapAsync(async (req, res) => {
-        const listing = req.body.listing;
-        const newListing = new Listing(listing);
-        await newListing.save();
-        res.redirect("/listings");
-    })
-);
-
-//Update Route
-app.put(
-    "/listings/:id",
-    validateListing,
-    wrapAsync(async (req, res) => {
-        let { id } = req.params;
-        await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-        res.redirect(`/listings/${id}`);
-    })
-);
-
-//Delete Route
-app.delete(
-    "/listings/:id",
-    wrapAsync(async (req, res) => {
-        let { id } = req.params;
-        let deletedListing = await Listing.findByIdAndDelete(id);
-        console.log(deletedListing);
-        res.redirect("/listings");
-    })
->>>>>>> e24ecb763bca4df9935ae423778be37ac160b343
 );
 
 // app.get("/testListing", async (req, res) => {cls
