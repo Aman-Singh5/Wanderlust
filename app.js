@@ -7,7 +7,7 @@ const methodOverride = require("method-override");
 const ejsMate = require('ejs-mate');
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const joi = require("")
+const listingSchema = require("./schema.js");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -36,9 +36,19 @@ app.get("/", (req, res) => {
     res.send("hi iam root");
 })
 
+const validateListing = (req, res, next) => {
+    let {error} = listingSchema.validate(req.body);
+    if(error){
+        throw new ExpressError(400, error.message);
+    }else{
+        next();
+    }
+}
+
 app.get(
     "/listings",
     wrapAsync(async (req, res) => {
+
         const allListings = await Listing.find({});
         res.render("listings/index", { allListings });
     })
@@ -63,10 +73,8 @@ app.get(
 // create route
 app.post(
     "/listings",
-    wrapAsync(async (req, res, next) => {
-        if (!(req.body.listing)) {
-            throw new ExpressError(400, "Send valid data for listing");
-        }
+    validateListing,
+    wrapAsync(async (req, res) => {
         const listing = req.body.listing;
         const newListing = new Listing(listing);
         await newListing.save();
@@ -77,6 +85,7 @@ app.post(
 //Update Route
 app.put(
     "/listings/:id",
+    validateListing,
     wrapAsync(async (req, res) => {
         let { id } = req.params;
         await Listing.findByIdAndUpdate(id, { ...req.body.listing });
