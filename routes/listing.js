@@ -4,6 +4,7 @@ const Listing = require("../modals/listing.js");
 const {listingSchema} = require("../schema");
 const ExpressError = require("../utils/ExpressError.js");
 const wrapAsync = require("../utils/wrapAsync.js");
+const {ensureAuthenticated} = require("../authMiddleware.js");
 
 
 const validateListing = (req, res, next) => {
@@ -26,7 +27,7 @@ router.get(
 
 
 // New route
-router.get("/new", (req, res) => {
+router.get("/new", ensureAuthenticated, (req, res) => {
     res.render("listings/new");
 })
 
@@ -49,6 +50,7 @@ router.get(
 // create route
 router.post(
   "/",
+  ensureAuthenticated,
   validateListing,
   wrapAsync(async (req, res, next) => {
     const listing = req.body.listing;
@@ -62,6 +64,7 @@ router.post(
 //Edit Route
 router.get(
   "/:id/edit",
+  ensureAuthenticated,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     const listing = await Listing.findById(id);
@@ -76,6 +79,7 @@ router.get(
 //Update Route
 router.put(
     "/:id",
+    ensureAuthenticated,
     validateListing,
     wrapAsync(async (req, res) => {
         let { id } = req.params;
@@ -88,6 +92,7 @@ router.put(
 //Delete Route
 router.delete(
     "/:id",
+    ensureAuthenticated,
     wrapAsync(async (req, res) => {
         let { id } = req.params;
         let deletedListing = await Listing.findByIdAndDelete(id);

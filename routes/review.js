@@ -4,6 +4,7 @@ const Review = require("../modals/review.js");
 const Listing = require("../modals/listing.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const {reviewSchema} = require("../schema.js");
+const {ensureAuthenticated} = require("../authMiddleware.js");
 
 const validateReview = (req, res, next) => {
     let {error} = reviewSchema.validate(req.body);
@@ -15,7 +16,7 @@ const validateReview = (req, res, next) => {
 }
 
 // reviews post route
-router.post("/", validateReview, wrapAsync(async (req, res) => {
+router.post("/", ensureAuthenticated, validateReview, wrapAsync(async (req, res) => {
     let listing = await Listing.findById(req.params.id);
     let newReview = new Review(req.body.review);
 
@@ -28,7 +29,7 @@ router.post("/", validateReview, wrapAsync(async (req, res) => {
 }));
 
 // review delete route
-router.delete("/:reviewId", wrapAsync(async (req, res) => {
+router.delete("/:reviewId", ensureAuthenticated, wrapAsync(async (req, res) => {
     const {id, reviewId} = req.params;
     await Listing.findByIdAndUpdate(id, {$pull: {reviews: reviewId}});
     await Review.findByIdAndDelete(reviewId);
