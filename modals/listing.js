@@ -33,6 +33,10 @@ const listingSchema = new Schema({
       ref: "Review"
     },
   ],
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref:"User"
+  }
 });
 
 // mongoose middleware to delete the reviews in review schema associated with the the lisitng which is being deleted

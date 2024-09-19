@@ -45,7 +45,7 @@ app.engine("ejs", ejsMate);
 const sessionOptions = {
   secret: "mysuperpower",
   resave: false,
-  saveUninitialized : true,
+  saveUninitialized : false,
   cookie: {
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
     maxAge : 7 * 24 * 60 * 60 * 1000,
@@ -60,10 +60,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());   // Initialize flash
 
-// Middleware to pass flash messages to the view
+
 app.use((req, res, next) => {
   res.locals.successMessage = req.flash('success');
   res.locals.errorMessage = req.flash('error');
+  res.locals.currUser = req.user;
   next();
 });
 
