@@ -13,6 +13,11 @@ const passport = require("passport");
 
 // Passport configuration
 require("./config/passport")(passport);
+// env file
+if(process.env.Node_ENV != "production") {
+  require('dotenv').config();
+}
+
 
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");

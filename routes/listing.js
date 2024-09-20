@@ -6,6 +6,11 @@ const ExpressError = require("../utils/ExpressError.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const { ensureAuthenticated, isOwner } = require("../authMiddleware.js");
 
+const multer  = require('multer')
+// const upload = multer({ dest: 'uploads/' })
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 const listingController = require("../controllers/listings.js");
 
 const validateListing = (req, res, next) => {
@@ -22,6 +27,7 @@ router
   .get(wrapAsync(listingController.index))
   .post(
     ensureAuthenticated,
+    upload.single('listing[image]'),
     validateListing,
     wrapAsync(listingController.createListing)
   );
