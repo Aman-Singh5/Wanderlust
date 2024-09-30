@@ -1,11 +1,21 @@
-<% layout("/layouts/boilerplate") -%>
+<!-- <% layout("/layouts/boilerplate") -%>
 
 <body>
     <h3>All Listings</h3>
 
-    <!-- <form method="GET" action="/listings/new">
-      <button>Create New Listing</button>
-    </form> -->
+    <div>
+        <h4>Filter Listings by Category</h4>
+        <div>
+            <a href="/listings">All Listings</a>
+            <a href="/listings?category=mountain">Mountain</a>
+            <a href="/listings?category=desert">Desert</a>
+            <a href="/listings?category=beach">Beach</a>
+            <a href="/listings?category=town">Town</a>
+            <a href="/listings?category=village">Village</a>
+        </div>
+    </div>
+
+  
     <div class="row justify-content-between row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-xs-1">
       <% for(let listing of allListings) { %>
         <a href="/listings/<%= listing._id %>"  style="margin-bottom: 2rem;">
@@ -21,4 +31,44 @@
         <% } %>
     </div>
 
+
+
+</body> -->
+
+<% layout("/layouts/boilerplate") -%>
+
+<body>
+    <h3>All Listings</h3>
+
+    <a href="#" onclick="filterListings('all')">All Listings</a>
+    <a href="#" onclick="filterListings('mountain')">Mountain</a>
+    <a href="#" onclick="filterListings('desert')">Desert</a>
+    <a href="#" onclick="filterListings('beach')">Beach</a>
+    <a href="#" onclick="filterListings('town')">Town</a>
+    <a href="#" onclick="filterListings('village')">Village</a>
+    
+
+    <div class="row justify-content-between row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-xs-1" id="listing-container">
+        <% for(let listing of allListings) { %>
+            <a href="/listings/<%= listing._id %>" style="margin-bottom: 2rem;">
+                <div class="card">
+                    <img src="<%= listing.image.url %>" class="card-img-top" alt="listing-image" style="width: 100%; height: 15rem;">
+                    <div class="card-body">
+                        <p class="card-text"><%= listing.title %></p>
+                        <p class="card-text"><%= listing.price %></p>
+                    </div>
+                </div>
+            </a>
+        <% } %>
+    </div>
+
+    <script>
+      async function filterListings(category) {
+          const response = await fetch(`/listings?category=${category}`);
+          const data = await response.text();
+          document.body.innerHTML = data; // Update the page content with the new data
+      }
+      </script>
+      
 </body>
+

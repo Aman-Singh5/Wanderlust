@@ -11,6 +11,7 @@ module.exports.listingSchema = Joi.object({
       filename: Joi.string().allow("", null),
       url: Joi.string().allow("", null),
     }),
+    category: Joi.string().valid('mountain', 'desert', 'beach', 'town', 'village'), // Match enum values
   }).required(),
 });
 
